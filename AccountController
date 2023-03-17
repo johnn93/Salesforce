@@ -1,0 +1,64 @@
+public class AccountController {
+    String accId;
+    public string name
+		{
+			get
+            {
+            if (name==null) name = '';
+            return name;
+            }
+            set;
+         }
+    public List<Account> acc=new List<Account>();
+    String queryResult;
+    public List<Contact> results{get;set;}
+    Public Integer noOfRecords {get;set;}
+    Public Integer size {get;set;}
+    private ApexPages.StandardController controller;
+    public AccountController() {
+      
+    }
+    
+    public ApexPages.StandardSetController ssc{
+        get{
+        	if(ssc == null){
+            	//queryResult = 'SELECT Name, Title,Phone,Is_Primary_Contact__c FROM Contact WHERE AccountId= :accId';
+            	List<Contact> allRelatedContacts = [SELECT Id,Name, Title,Phone,Is_Primary_Contact__c FROM Contact WHERE AccountId=:accId ];
+                ssc = new ApexPages.StandardSetController(allRelatedContacts);
+            	ssc.setPageSize(20);
+            	noOfRecords = ssc.getResultSize();
+            }
+            return ssc;
+        }
+        set;
+    }
+    
+    public List<Account> getAccount() {
+        acc = [SELECT Id,Name,AccountNumber,Type,Phone,Fax, Active__c FROM Account WHERE Name LIKE:'Express Logistics and Transport'];
+        accId = acc.get(0).Id;
+    	return acc;
+    }
+    public List<Contact> getContacts() {
+    return (List<Contact>)ssc.getRecords();
+}
+    public PageReference save(){
+        update acc;
+        return null; 
+    }
+    
+    public PageReference cancel()
+    {       
+      return null;   
+    }
+    
+    public void searchContacts(){
+        List<Contact> contactsToSearch=new List<Contact>();
+        String searchName = '%' + name + '%';
+        contactsToSearch=[SELECT Name, Title,Phone,Is_Primary_Contact__c FROM Contact WHERE Name Like :searchName And AccountId=:accId ];
+        ssc = new ApexPages.StandardSetController(contactsToSearch);
+        ssc.setPageSize(10);
+    }
+    
+    
+    
+}

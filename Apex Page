@@ -1,0 +1,62 @@
+<apex:page controller="AccountController" >
+    <apex:form >
+    <apex:pageBlock title="Account Info">
+        <apex:pageBlockButtons >
+            <apex:commandButton value="Save" action="{!save}"/>
+            <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+        <apex:pageBlockSection >
+        <apex:repeat var="acc" value="{!account}">
+                <apex:inputField value="{!acc.Name}"/>
+                <apex:inputField value="{!acc.AccountNumber}"/>
+                <apex:inputField value="{!acc.Type}"/>
+                <apex:inputField value="{!acc.Active__c}"/>
+                <apex:inputField value="{!acc.Phone}"/>
+                <apex:inputField value="{!acc.Fax}"/>
+            </apex:repeat>
+            </apex:pageBlockSection>
+    </apex:pageBlock>
+        </apex:form>
+       <apex:form > 
+    <apex:pageBlock id="pb" title="Related Contacts">
+        
+        <apex:pageBlockButtons location="top">
+                <apex:commandButton id="submit" value="Search" action="{!searchContacts}" reRender="contact-table" />
+            </apex:pageBlockButtons>
+        <apex:pageBlockSection columns="1">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Name" />
+                    <apex:inputText value="{!name}" />
+                </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        	<apex:commandButton value="First" action="{!ssc.first}" rendered="{!ssc.hasPrevious}" reRender="pt,pb" />
+            <apex:commandButton value="Previous" action="{!ssc.previous}" rendered="{!ssc.hasPrevious}" reRender="pt,pb" />
+            <apex:commandButton value="Next" action="{!ssc.next}" rendered="{!ssc.hasNext}" reRender="pt,pb" />
+            <apex:commandButton value="End" action="{!ssc.last}" rendered="{!ssc.hasNext}" reRender="pt,pb" />
+         <apex:pageBlockSection id="contact-table" columns="1">   
+        <apex:pageBlockTable id="pt" value="{!contacts}" var="ct">
+            <apex:column value="{!ct.Id}"/>
+            <apex:column value="{!ct.Name}"/>
+            <apex:column value="{!ct.Title}"/>
+            <apex:column value="{!ct.Phone}"/>
+            <apex:column value="{!ct.Is_Primary_Contact__c}"/>
+            <apex:column >
+                <apex:image rendered="{!if(ct.Is_Primary_Contact__c==true,true,false)}">
+            	<svg aria-hidden='true' class='slds-icon' >
+                    <use  xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#avatar')}" width='50' />
+                </svg>
+                </apex:image>
+                  <apex:commandLink value="Set as Primary" rendered="{!if(ct.Is_Primary_Contact__c==false,true,false)}" onclick="return confirm('are you sure to set {!ct.Name} as the primary?')"  />
+           </apex:column>
+        </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        <apex:outputText value="{!ssc.PageNumber}">Page Number: </apex:outputText>
+        <br/>
+        	<apex:commandButton value="First" action="{!ssc.first}" rendered="{!ssc.hasPrevious}" reRender="pt,pb" />
+            <apex:commandButton value="Previous" action="{!ssc.previous}" rendered="{!ssc.hasPrevious}" reRender="pt,pb" />
+            <apex:commandButton value="Next" action="{!ssc.next}" rendered="{!ssc.hasNext}" reRender="pt,pb" />
+            <apex:commandButton value="End" action="{!ssc.last}" rendered="{!ssc.hasNext}" reRender="pt,pb" />
+         </apex:pageBlock>
+           </apex:form>
+        
+</apex:page>

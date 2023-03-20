@@ -46,7 +46,11 @@
                     <use  xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#avatar')}" width='50' />
                 </svg>
                 </apex:image>
-                  <apex:commandLink value="Set as Primary" rendered="{!if(ct.Is_Primary_Contact__c==false,true,false)}" onclick="return confirm('are you sure to set {!ct.Name} as the primary?')"  />
+            </apex:column>
+            <apex:column >
+                <apex:commandLink value="Set as Primary" rendered="{!if(ct.Is_Primary_Contact__c==false,true,false)}"  action="{!updateContacts}" onclick="if(!confirm('Are you sure')){return false};">
+                    <apex:param name="ctId" value="{!ct.Id}" />
+                </apex:commandLink>
            </apex:column>
         </apex:pageBlockTable>
             </apex:pageBlockSection>

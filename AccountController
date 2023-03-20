@@ -1,5 +1,5 @@
 public class AccountController {
-    String accId;
+    String accId{get;set;}
     public string name
 		{
 			get
@@ -9,10 +9,7 @@ public class AccountController {
             }
             set;
          }
-    public String contPrimary{get;set;}
-    public Contact thisContact{get;set;}
-    public List<Account> acc=new List<Account>();
-    String queryResult;
+    public List<Account> acc{get;set;}
     public List<Contact> results{get;set;}
     Public Integer noOfRecords {get;set;}
     Public Integer size {get;set;}
@@ -20,13 +17,12 @@ public class AccountController {
     public AccountController() {
         acc = [SELECT Id,Name,AccountNumber,Type,Phone,Fax, Active__c FROM Account WHERE Name LIKE:'Express Logistics and Transport'];
         accId = acc.get(0).Id;
-      results = [SELECT Id,Name, Title,Phone,Is_Primary_Contact__c FROM Contact WHERE AccountId=:accId ];
+      results = [SELECT Id,Name, Title,Phone,Is_Primary_Contact__c FROM Contact WHERE AccountId=:accId];
     }
     
     public ApexPages.StandardSetController ssc{
         get{
         	if(ssc == null){
-            	//queryResult = 'SELECT Name, Title,Phone,Is_Primary_Contact__c FROM Contact WHERE AccountId= :accId';
             	ssc = new ApexPages.StandardSetController(results);
             	ssc.setPageSize(20);
             	noOfRecords = ssc.getResultSize();
@@ -54,28 +50,25 @@ public class AccountController {
       return null;   
     }
     
-    public void searchContacts(){
-        List<Contact> contactsToSearch=new List<Contact>();
+    public PageReference searchContacts(){
         String searchName = '%' + name + '%';
-        contactsToSearch=[SELECT Id,Name, Title,Phone,Is_Primary_Contact__c FROM Contact WHERE Name Like :searchName And AccountId=:accId ];
-        ssc = new ApexPages.StandardSetController(contactsToSearch);
-        ssc.setPageSize(10);
+        results=[SELECT Id,Name, Title,Phone,Is_Primary_Contact__c FROM Contact WHERE Name Like :searchName And AccountId=:accId ];
+        ssc = new ApexPages.StandardSetController(results);
+        return null;
     }
     
     
     public PageReference updateContacts(){
-        String contId = ApexPages.currentPage().getParameters().get('cdId');
-        Contact c = [SELECT Id,Name, Title,Phone,Is_Primary_Contact__c FROM Contact Where Id=:contId];
+        String contId = ApexPages.currentPage().getParameters().get('ctId');
+        Contact c = [Select Id,Name, Title,Phone,Is_Primary_Contact__c,Primary_Contact_Phone__c FROM Contact Where Id=:contId];
+        String phone = c.Primary_Contact_Phone__c;
         c.Is_Primary_Contact__c=true;
-        results.add(c);
-        ssc = new ApexPages.StandardSetController(results);
-        update results;
-        
-        
-        return null;
+        c.Phone=phone;
+        system.debug(c);
+        if(c!=null){
+           update c;}
+        PageReference tempPage = ApexPages.currentPage();            
+        tempPage.setRedirect(true);
+        return tempPage;
     }
-    
-
-    
-    
-}
+ }
